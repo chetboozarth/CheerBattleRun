@@ -391,29 +391,56 @@ function updatePlay() {
 
 function drawBackground() {
   const grad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
-  grad.addColorStop(0, "#77bfff");
-  grad.addColorStop(0.5, "#94d0ff");
-  grad.addColorStop(1, "#ffd7a0");
+  grad.addColorStop(0, "#ffd3f1");
+  grad.addColorStop(0.45, "#ffc4df");
+  grad.addColorStop(1, "#ffd6a5");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-  for (let i = 0; i < 7; i += 1) {
-    const x = ((i * 230 - (frame * 0.9)) % (GAME_WIDTH + 230)) - 120;
-    ctx.fillStyle = "#8492bd";
-    ctx.fillRect(x, 240, 110, 220);
-    ctx.fillStyle = "#a4b6df";
-    for (let w = 0; w < 4; w += 1) {
-      ctx.fillRect(x + 15 + w * 22, 265, 12, 18);
-      ctx.fillRect(x + 15 + w * 22, 300, 12, 18);
-    }
+  ctx.fillStyle = "rgba(255,255,255,0.65)";
+  for (let i = 0; i < 8; i += 1) {
+    const x = ((i * 200 - (frame * 0.5)) % (GAME_WIDTH + 240)) - 120;
+    const y = 80 + (i % 3) * 42;
+    ctx.beginPath();
+    ctx.arc(x, y, 25, 0, Math.PI * 2);
+    ctx.arc(x + 25, y - 8, 20, 0, Math.PI * 2);
+    ctx.arc(x + 52, y, 24, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  ctx.fillStyle = "#444b64";
+  for (let i = 0; i < 7; i += 1) {
+    const x = ((i * 240 - (frame * 0.9)) % (GAME_WIDTH + 260)) - 140;
+    ctx.fillStyle = "#c987ff";
+    ctx.fillRect(x + 52, 292, 16, 170);
+    ctx.fillStyle = "#7ee07d";
+    ctx.beginPath();
+    ctx.arc(x + 60, 276, 48, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ff7ca8";
+    ctx.beginPath();
+    ctx.arc(x + 40, 272, 9, 0, Math.PI * 2);
+    ctx.arc(x + 78, 266, 10, 0, Math.PI * 2);
+    ctx.arc(x + 58, 250, 8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "#5f6176";
   ctx.fillRect(0, GROUND_Y, GAME_WIDTH, GAME_HEIGHT - GROUND_Y);
-  ctx.fillStyle = "#efb85e";
+  ctx.fillStyle = "#ffe184";
   for (let i = 0; i < 35; i += 1) {
     const lx = ((i * 64 - frame * 6) % (GAME_WIDTH + 60)) - 30;
     ctx.fillRect(lx, GROUND_Y + 55, 35, 8);
+  }
+
+  for (let i = 0; i < 12; i += 1) {
+    const hx = ((i * 150 - frame * 3) % (GAME_WIDTH + 120)) - 50;
+    const hy = 525 + (i % 2) * 22;
+    ctx.fillStyle = "#ff9dc4";
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.bezierCurveTo(hx - 12, hy - 14, hx - 32, hy + 2, hx, hy + 22);
+    ctx.bezierCurveTo(hx + 32, hy + 2, hx + 12, hy - 14, hx, hy);
+    ctx.fill();
   }
 }
 
@@ -476,13 +503,13 @@ function drawWorm(w) {
 }
 
 function drawEnemy(e) {
-  ctx.fillStyle = "#583198";
+  ctx.fillStyle = "#8d43c7";
   ctx.fillRect(e.x, e.y + 20, e.w, e.h - 20);
-  ctx.fillStyle = "#ffcc9f";
+  ctx.fillStyle = "#ffd7b8";
   ctx.beginPath();
   ctx.arc(e.x + e.w / 2, e.y + 16, 14, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = "#ffd53f";
+  ctx.fillStyle = "#ff82ad";
   ctx.fillRect(e.x + 10, e.y + 36, e.w - 20, 9);
 }
 
@@ -510,7 +537,7 @@ function drawPowerup(p) {
 
 function drawBoss() {
   if (!boss) return;
-  ctx.fillStyle = "#b40d3a";
+  ctx.fillStyle = "#d61773";
   ctx.fillRect(boss.x, boss.y + 34, boss.w, boss.h - 34);
   ctx.fillStyle = "#ffd5a8";
   ctx.beginPath();
@@ -556,38 +583,50 @@ function overlayCard(title, lines) {
 
 function drawHome() {
   drawBackground();
-  ctx.fillStyle = "rgba(22,32,75,0.7)";
+  ctx.fillStyle = "rgba(70, 18, 80, 0.56)";
   ctx.fillRect(70, 55, 1140, 610);
   ctx.fillStyle = "#f0f7ff";
-  ctx.font = "bold 86px Verdana";
-  ctx.fillText("Legacy Cheer Battle Run", 110, 190);
-  ctx.font = "bold 38px Verdana";
+  ctx.font = "bold 80px Verdana";
+  ctx.fillText("Legacy Cheer Battle Run", 106, 184);
+  ctx.font = "bold 35px Verdana";
   ctx.fillStyle = "#ff9f4a";
-  ctx.fillText("LE", 110, 246);
+  ctx.fillText("Legacy Energy (LE)", 110, 244);
   ctx.fillStyle = "#ffffff";
   ctx.fillText("Press Enter To Continue", 110, 560);
-  ctx.font = "28px Verdana";
-  ctx.fillText("Blue + Orange Energy | Street Sprint | Cheer Power", 110, 615);
+  ctx.font = "26px Verdana";
+  ctx.fillText("Blue + Orange Spark | Cheer Power Sprint", 110, 614);
   drawPlayer();
 }
 
 function drawMenu() {
   drawBackground();
-  overlayCard("Main Menu", [
-    "Choose options then press Enter",
-    `Difficulty: ${selectedDifficulty}`,
-    `Sound: ${soundOn ? "ON" : "OFF"}`,
-    "Controls: Arrow keys move, Space jump, X tumble",
-    "10 lives start, easy extra lives, 3 boss levels"
-  ]);
+  ctx.fillStyle = "rgba(63, 11, 63, 0.73)";
+  ctx.fillRect(140, 70, 1000, 580);
+  ctx.strokeStyle = "#ffa9de";
+  ctx.lineWidth = 5;
+  ctx.strokeRect(140, 70, 1000, 580);
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 56px Verdana";
+  ctx.fillText("Main Menu", 210, 158);
+  ctx.font = "26px Verdana";
+  ctx.fillStyle = "#ffe0f2";
+  ctx.fillText("Choose options and press Enter", 212, 204);
+
+  ctx.fillStyle = "rgba(255,255,255,0.12)";
+  ctx.fillRect(188, 232, 905, 285);
   menuItems.forEach((item, i) => {
-    const y = 335 + i * 48;
-    ctx.fillStyle = i === menuIndex ? "#ffd765" : "#e8f0ff";
+    const y = 276 + i * 52;
+    ctx.fillStyle = i === menuIndex ? "#ffd26d" : "#ecf5ff";
     let value = item.label;
     if (item.id === "difficulty") value = `Difficulty: ${selectedDifficulty}`;
     if (item.id === "sound") value = `Sound: ${soundOn ? "ON" : "OFF"}`;
-    ctx.fillText(`${i === menuIndex ? ">" : " "} ${value}`, 230, y);
+    ctx.fillText(`${i === menuIndex ? ">" : " "} ${value}`, 218, y);
   });
+
+  ctx.font = "22px Verdana";
+  ctx.fillStyle = "#d8f3ff";
+  ctx.fillText("Controls: Arrow keys move, Space jump, X tumble", 210, 560);
+  ctx.fillText("10 lives start | Easy extra lives | 3 boss levels", 210, 594);
 }
 
 function drawPlay() {
