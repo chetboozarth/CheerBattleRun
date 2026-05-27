@@ -9,11 +9,11 @@ const GAME_HEIGHT = canvas.height;
 const GROUND_Y = 600;
 
 const difficultyMap = {
-  "cake walk": { speed: 5.0, enemyRate: 0.005, wormRate: 0.012, bossHp: 4 },
-  "pretty easy": { speed: 6.0, enemyRate: 0.008, wormRate: 0.016, bossHp: 6 },
-  "kinda hard": { speed: 7.2, enemyRate: 0.012, wormRate: 0.02, bossHp: 8 },
-  "this is definitely hard": { speed: 8.1, enemyRate: 0.016, wormRate: 0.025, bossHp: 10 },
-  "SUPER TOUGH": { speed: 9.2, enemyRate: 0.02, wormRate: 0.03, bossHp: 12 }
+  "cake walk": { speed: 3.9, levelRamp: 0.2, enemyRate: 0.0025, wormRate: 0.007, bossHp: 3, bossDelay: 2300, projectileCadence: 130, lifeBonusEvery: 1100 },
+  "pretty easy": { speed: 5.0, levelRamp: 0.35, enemyRate: 0.005, wormRate: 0.012, bossHp: 5, bossDelay: 2000, projectileCadence: 105, lifeBonusEvery: 1450 },
+  "kinda hard": { speed: 6.3, levelRamp: 0.6, enemyRate: 0.009, wormRate: 0.017, bossHp: 8, bossDelay: 1750, projectileCadence: 86, lifeBonusEvery: 1800 },
+  "this is definitely hard": { speed: 7.6, levelRamp: 0.8, enemyRate: 0.014, wormRate: 0.023, bossHp: 11, bossDelay: 1600, projectileCadence: 74, lifeBonusEvery: 2200 },
+  "SUPER TOUGH": { speed: 9.2, levelRamp: 1.05, enemyRate: 0.02, wormRate: 0.031, bossHp: 14, bossDelay: 1450, projectileCadence: 62, lifeBonusEvery: 2800 }
 };
 
 const keys = { left: false, right: false, jump: false, tumble: false };
@@ -264,14 +264,14 @@ function updatePlay() {
   if (player.invuln > 0) player.invuln -= 1;
 
   const d = difficultyMap[selectedDifficulty];
-  const baseSpeed = d.speed + (level - 1) * 0.7;
+  const baseSpeed = d.speed + (level - 1) * d.levelRamp;
 
   if (!bossMode) {
     if (Math.random() < d.wormRate) spawnWorm(baseSpeed + Math.random() * 2);
     if (Math.random() < d.enemyRate) spawnEnemy(baseSpeed + Math.random() * 1.8);
     if (Math.random() < 0.018) spawnCollectible(baseSpeed * 0.8);
     if (Math.random() < 0.008) spawnPowerup(baseSpeed * 0.7);
-    if (levelTimer > 1700) spawnBoss();
+    if (levelTimer > d.bossDelay) spawnBoss();
   }
 
   if (!bossMode) {
@@ -333,7 +333,7 @@ function updatePlay() {
       score += c.kind === "megaphone" ? 180 : 120;
       c.x = -100;
       voiceCheer("woo");
-      if (score > 0 && score % 1800 < 140) {
+      if (score > 0 && score % d.lifeBonusEvery < 140) {
         lives += 1;
         softMessage = "Extra Life!";
         messageTimer = 70;
@@ -356,7 +356,7 @@ function updatePlay() {
     boss.swing += 0.06;
     boss.y = GROUND_Y - 170 + Math.sin(boss.swing) * 8;
     if (boss.x > 760) boss.x -= 1.8;
-    if (frame % 80 === 0) {
+    if (frame % d.projectileCadence === 0) {
       projectiles.push({
         x: boss.x - 6,
         y: boss.y + 60,
